@@ -3,14 +3,12 @@
 """ 
     Skeleton code for k-means clustering mini-project.
 """
-
-
-
-
+import math
 import pickle
 import numpy
 import matplotlib.pyplot as plt
 import sys
+
 sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 
@@ -40,37 +38,65 @@ def Draw(pred, features, poi, mark_poi=False, name="image.png", f1_name="feature
 
 ### load in the dict of dicts containing all the data on each person in the dataset
 data_dict = pickle.load( open("../final_project/final_project_dataset.pkl", "r") )
-### there's an outlier--remove it! 
+### there's an outlier--remove it!
+# to clean the outliers you can change the values to remove one particular or many at once.
+def outlierClean(data_dict):
+    newDictionary = {}
+    for ele in data_dict:
+        if not((data_dict[ele]['salary'] > 1000000) or (data_dict[ele]['exercised_stock_options'] > 25000000)):
+            newDictionary[ele] = data_dict[ele]
+    return newDictionary
+
 data_dict.pop("TOTAL", 0)
+
+#todo this is to find out various aspects of querying
+'''max = 100000000000000
+for ele in data_dict:
+    if not math.isnan(float(data_dict[ele]['salary'])):
+        if data_dict[ele]['salary'] < max:
+            max = data_dict[ele]['salary']
+print "Maximum is ",max'''
+
+#todo uncomment this for cleaning the outliers
+#data_dict = outlierClean(data_dict)
 
 
 ### the input features we want to use 
 ### can be any key in the person-level dictionary (salary, director_fees, etc.) 
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
+feature_3 = "total_payments"
 poi  = "poi"
 features_list = [poi, feature_1, feature_2]
-data = featureFormat(data_dict, features_list )
+data = featureFormat(data_dict, features_list)
 poi, finance_features = targetFeatureSplit( data )
 
+#todo doing the feature scaling
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+scaler.fit(finance_features)
+print scaler.transform(finance_features)
+print scaler.transform([[200000, 1000000]])
 
 ### in the "clustering with 3 features" part of the mini-project,
 ### you'll want to change this line to 
 ### for f1, f2, _ in finance_features:
 ### (as it's currently written, the line below assumes 2 features)
 for f1, f2 in finance_features:
-    plt.scatter( f1, f2 )
+    plt.scatter( f1, f2)
 plt.show()
 
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
-
-
+from sklearn.cluster import KMeans
+kmeans_model = KMeans(n_clusters = 3).fit(finance_features)
+pred = kmeans_model.labels_
 
 
 ### rename the "name" parameter when you change the number of features
 ### so that the figure gets saved to a different file
 try:
-    Draw(pred, finance_features, poi, mark_poi=False, name="clusters.pdf", f1_name=feature_1, f2_name=feature_2)
+    Draw(pred, finance_features, poi, mark_poi=True, name="clusters.pdf", f1_name=feature_1, f2_name=feature_2)
 except NameError:
     print "no predictions object named pred found, no clusters to plot"

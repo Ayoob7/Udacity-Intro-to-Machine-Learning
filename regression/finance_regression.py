@@ -24,12 +24,12 @@ dictionary = pickle.load( open("../final_project/final_project_dataset_modified.
 features_list = ["bonus", "salary"]
 data = featureFormat( dictionary, features_list, remove_any_zeroes=True)
 target, features = targetFeatureSplit( data )
-
+sort_keys = '../tools/python2_lesson06_keys.pkl'
 ### training-testing split needed in regression, just like classification
 from sklearn.cross_validation import train_test_split
 feature_train, feature_test, target_train, target_test = train_test_split(features, target, test_size=0.5, random_state=42)
 train_color = "b"
-test_color = "b"
+test_color = "r"
 
 
 
@@ -37,13 +37,17 @@ test_color = "b"
 ### Please name it reg, so that the plotting code below picks it up and 
 ### plots it correctly. Don't forget to change the test_color above from "b" to
 ### "r" to differentiate training points from test points.
+from sklearn import datasets, linear_model
+from sklearn.metrics import mean_squared_error, r2_score
 
+reg = linear_model.LinearRegression()
 
+# Train the model using the training sets
+reg.fit(feature_train, target_train)
 
-
-
-
-
+print "Gradient : ",reg.coef_
+print "Intercept : ",reg.intercept_
+print r2_score(target_test,reg.predict(feature_test))
 
 ### draw the scatterplot, with color-coded training and testing points
 import matplotlib.pyplot as plt
@@ -64,6 +68,11 @@ try:
     plt.plot( feature_test, reg.predict(feature_test) )
 except NameError:
     pass
+
+reg.fit(feature_test, target_test)
+plt.plot(feature_train, reg.predict(feature_train), color="b")
+print reg.coef_
+
 plt.xlabel(features_list[1])
 plt.ylabel(features_list[0])
 plt.legend()

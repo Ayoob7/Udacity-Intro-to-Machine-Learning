@@ -16,7 +16,25 @@
 """
 
 import pickle
-
+import difflib
+from difflib import get_close_matches
 enron_data = pickle.load(open("../final_project/final_project_dataset.pkl", "r"))
+
+#print type(enron_data)  data[person_name]["poi"]==1
+#print len(enron_data['METTS MARK'])
+'''count = 0
+for person in enron_data:
+    if enron_data[person]["poi"] == True:
+        count += 1
+print count'''
+
+#for eleme in enron_data:
+    #print eleme
+#salary email_address
+count = 0
+for eleme in enron_data:
+    if enron_data[eleme]['email_address'] != "NaN":
+        count += 1
+print count
 
 
