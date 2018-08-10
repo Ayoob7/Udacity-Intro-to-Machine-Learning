@@ -44,6 +44,11 @@ clf = DecisionTreeClassifier()
 clf.fit(features_train, labels_train)
 
 print clf.score(features_test, labels_test)
+arrayPredict = clf.predict(features_test)
+
+from sklearn.metrics import recall_score
+
+print recall_score(labels_test, arrayPredict, average=None)
 
 
 
