@@ -1,4 +1,3 @@
 ud120-projects
 ==============
-
-Starter project code for students taking Udacity ud120
+This is a fully answered Project to the Udacity course. Use it to check and evaluate your answers.
